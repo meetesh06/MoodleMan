@@ -4,13 +4,13 @@ This package provides a set of APIs to make evaluation of moodle assignment subm
 The idea is to create a reusable set of classes to replace hard to read/debug bash scripts we are currently using.
 Most assignments follow a simple structure:
 
-1. validate and extract submission.zip file / return if error
-2. compile (if needed) / return if error
-3. \[compiledProgram\] < testcase1.in > out1
-...
-4. compare out1 to testcase1.out
-...
-5. return number of passed testcases
+> 1. __Validate__ and extract submission.zip file / return if error
+> 2. __Compile__ (if needed) / return if error
+> 3. \[compiledProgram\] < testcase1.in > output1
+> ...
+> 4. __Compare__ out1 to testcase1.out
+> ...
+> 5. __Compute__ passed testcases
 
 The [SubmissionHandler](https://meetesh06.github.io/MoodleMan/handlers.html) Class is extended for different languages like Java, Cpp, etc. to make this repetitive task easier.
 
