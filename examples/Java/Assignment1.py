@@ -1,8 +1,6 @@
 from moodle import MoodleSubmission
 from moodle import JavaHandler
-from moodle import Log
 import json
-
 import sys
 import os
 n = len(sys.argv)
@@ -20,7 +18,7 @@ for i in range(numTests):
   r = p1.evalMatch(testcase1Input, testcase1Output)
   testCaseId = "test" + str(i)
   result[testCaseId] = r
-  if (r):
+  if (r[0]):
     marks = marks + 1
   else:
     marks = marks + 0
