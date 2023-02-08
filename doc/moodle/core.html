@@ -102,7 +102,7 @@ class MoodleSubmission:
       self.handle = subHandler(self.dir)
     except Exception as ex:
       Log.localException(ex)
-      Log.jsonError(&#34;Failed to open zip&#34;)
+      Log.jsonError(&#34;Failed to open zip file!&#34;)
     
     self.callHandlerMethods()
 
@@ -157,14 +157,14 @@ class MoodleSubmission:
     
     `comparator`: (default=`compareStringsIgnoreWhiteSpace`) the comparator used to match the obtained results. 
     
-    `return`: returns bool.
+    `return`: returns bool, obtainedRes, expectedRes.
     &#34;&#34;&#34;
     obtainedRes = self.handle.eval(input)
     expectedRes = open(output, &#34;r&#34;).read()
     if (comparator(obtainedRes, expectedRes)):
-      return True
+      return True, obtainedRes, expectedRes
     else:
-      return False
+      return False, obtainedRes, expectedRes
 
   def __del__(self):
     try:
@@ -308,7 +308,7 @@ The class also takes care of allocation and cleanup of temporary directories/fil
       self.handle = subHandler(self.dir)
     except Exception as ex:
       Log.localException(ex)
-      Log.jsonError(&#34;Failed to open zip&#34;)
+      Log.jsonError(&#34;Failed to open zip file!&#34;)
     
     self.callHandlerMethods()
 
@@ -363,14 +363,14 @@ The class also takes care of allocation and cleanup of temporary directories/fil
     
     `comparator`: (default=`compareStringsIgnoreWhiteSpace`) the comparator used to match the obtained results. 
     
-    `return`: returns bool.
+    `return`: returns bool, obtainedRes, expectedRes.
     &#34;&#34;&#34;
     obtainedRes = self.handle.eval(input)
     expectedRes = open(output, &#34;r&#34;).read()
     if (comparator(obtainedRes, expectedRes)):
-      return True
+      return True, obtainedRes, expectedRes
     else:
-      return False
+      return False, obtainedRes, expectedRes
 
   def __del__(self):
     try:
@@ -448,7 +448,7 @@ The class also takes care of allocation and cleanup of temporary directories/fil
 <p><code>input</code>: Path to input file to be evaluated.</p>
 <p><code>output</code>: Path to expected output file.</p>
 <p><code>comparator</code>: (default=<code><a title="moodle.core.compareStringsIgnoreWhiteSpace" href="#moodle.core.compareStringsIgnoreWhiteSpace">compareStringsIgnoreWhiteSpace()</a></code>) the comparator used to match the obtained results. </p>
-<p><code>return</code>: returns bool.</p></div>
+<p><code>return</code>: returns bool, obtainedRes, expectedRes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -463,14 +463,14 @@ The class also takes care of allocation and cleanup of temporary directories/fil
   
   `comparator`: (default=`compareStringsIgnoreWhiteSpace`) the comparator used to match the obtained results. 
   
-  `return`: returns bool.
+  `return`: returns bool, obtainedRes, expectedRes.
   &#34;&#34;&#34;
   obtainedRes = self.handle.eval(input)
   expectedRes = open(output, &#34;r&#34;).read()
   if (comparator(obtainedRes, expectedRes)):
-    return True
+    return True, obtainedRes, expectedRes
   else:
-    return False</code></pre>
+    return False, obtainedRes, expectedRes</code></pre>
 </details>
 </dd>
 </dl>

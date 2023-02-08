@@ -200,3 +200,65 @@ class JavaHandler(GeneralHandler):
     if (self.compiled == False):
       Log.jsonError("Cannot eval without successful compilation!")
     return GeneralHandler.genericEval(self, self.mainFilePath, self.evalCommand, inputFile)
+
+class CppHandler(GeneralHandler):
+  """
+  `CppHandler` extends `GeneralHandler` to support c++ submissions.
+  It expects that there will be a unique entry point (default="main.cpp") somewhere in the project.
+  The handler recursively searches the project for a this unique entry point.
+  It goes to the directory where the entry point exists and compiles it using javac. 
+  """
+  def __init__(self, workPath, entryFilename="main.cpp", compileCommand="g++ main.cpp", evalCommand="./a.out"):
+    """
+    `workPath`: The location of the project to process.
+    
+    `entryFilename`: (default="main.cpp") Name of the entry file of the project.
+    
+    `compileCommand`: (default="g++ main.cpp") Compilation command.
+    
+    `evalCommand`: (default="./a.out") Eval command.
+    
+    `return`: returns nothing.
+    """
+    super().__init__(workPath)
+    self.entryFilename = entryFilename
+    self.compileCommand = compileCommand
+    self.evalCommand = evalCommand
+    
+  # Ensures that the extracted folder contains the Main.java (the entry file)
+  def validate(self):
+    """
+    Validates that the project contains a unique entry point (`self.entryFilename`). 
+    
+    `return`: Tuple(status: bool, entryFilePath: string). If status is false 'entryFilePath' contains the error message.
+    """
+    res = GeneralHandler.genericValidator(self, "*.cpp", self.entryFilename)
+    self.validated = res[0]
+    self.mainFilePath = res[1]
+    return res
+  
+  # Compiles the given file
+  def compile(self):
+    """
+    Compiles the project using `g++`.
+    
+    `return`: (returnStatus: int) returns the exit status of the compilation process.
+    """
+    if (self.validated == False):
+      Log.jsonError("Tried to compile an invalidated submission.")
+    res = GeneralHandler.genericCompiler(self, self.mainFilePath, self.compileCommand)
+    self.compiled = (res == 0)
+    return res
+
+  # Evaluate
+  def eval(self, inputFile):
+    """
+    Evaluates the program by passing the input file as `STDIN` to the compiled program.
+    
+    `inputFile`: path the input file
+    
+    `return`: Returns the obtained result as string
+    """
+    if (self.compiled == False):
+      Log.jsonError("Cannot eval without successful compilation!")
+    return GeneralHandler.genericEval(self, self.mainFilePath, self.evalCommand, inputFile)

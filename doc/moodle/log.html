@@ -27,6 +27,8 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import sys
+import tempfile
+import datetime
 
 class Log:
   &#34;&#34;&#34;
@@ -34,6 +36,29 @@ class Log:
 
   The frontend should see a simplified error message whereas we maintain detailed logs for execution separately.
   &#34;&#34;&#34;
+
+  PrintLocal=None
+
+  @staticmethod
+  def initLocalLog(path):
+    Log.PrintLocal = type(&#39;&#39;, (), {})()
+    Log.PrintLocal.name = path
+    Log.local(&#34;Start new session&#34;)
+
+  @staticmethod
+  def initTempLog():
+    Log.PrintLocal = tempfile.NamedTemporaryFile()
+
+
+  @staticmethod
+  def printLog():
+    if (Log.PrintLocal == None):
+      Log.jsonError(&#34;backend error, invalid read to log!&#34;)
+    print(&#34;=== Printing Log file ===&#34;)
+    with open(Log.PrintLocal.name) as f:
+      for line in f:
+        print(line, end =&#34;&#34;)
+
   @staticmethod
   def jsonError(msg):
     &#34;&#34;&#34;
@@ -55,7 +80,12 @@ class Log:
 
     `return`: returns nothing.
     &#34;&#34;&#34;
-    print(&#34;(*) &#34;, msg)
+    if (Log.PrintLocal != None):
+      try:
+        with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+          f.write(str(datetime.datetime.now())+&#34; (*) &#34; + str(msg) + &#34;\n&#34;)
+      except Exception as ex:
+        Log.jsonError(&#34;Unexpected logging error occurred!&#34;)
 
   @staticmethod
   def localException(msg):
@@ -66,7 +96,12 @@ class Log:
 
     `return`: returns nothing.
     &#34;&#34;&#34;
-    print(&#34;(E) &#34;, msg)</code></pre>
+    if (Log.PrintLocal != None):
+      try:
+        with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+          f.write(str(datetime.datetime.now())+&#34; (E) &#34; + str(msg) + &#34;\n&#34;)
+      except Exception as ex:
+        Log.jsonError(&#34;Unexpected logging error occurred!&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -94,6 +129,29 @@ class Log:
 
   The frontend should see a simplified error message whereas we maintain detailed logs for execution separately.
   &#34;&#34;&#34;
+
+  PrintLocal=None
+
+  @staticmethod
+  def initLocalLog(path):
+    Log.PrintLocal = type(&#39;&#39;, (), {})()
+    Log.PrintLocal.name = path
+    Log.local(&#34;Start new session&#34;)
+
+  @staticmethod
+  def initTempLog():
+    Log.PrintLocal = tempfile.NamedTemporaryFile()
+
+
+  @staticmethod
+  def printLog():
+    if (Log.PrintLocal == None):
+      Log.jsonError(&#34;backend error, invalid read to log!&#34;)
+    print(&#34;=== Printing Log file ===&#34;)
+    with open(Log.PrintLocal.name) as f:
+      for line in f:
+        print(line, end =&#34;&#34;)
+
   @staticmethod
   def jsonError(msg):
     &#34;&#34;&#34;
@@ -115,7 +173,12 @@ class Log:
 
     `return`: returns nothing.
     &#34;&#34;&#34;
-    print(&#34;(*) &#34;, msg)
+    if (Log.PrintLocal != None):
+      try:
+        with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+          f.write(str(datetime.datetime.now())+&#34; (*) &#34; + str(msg) + &#34;\n&#34;)
+      except Exception as ex:
+        Log.jsonError(&#34;Unexpected logging error occurred!&#34;)
 
   @staticmethod
   def localException(msg):
@@ -126,10 +189,52 @@ class Log:
 
     `return`: returns nothing.
     &#34;&#34;&#34;
-    print(&#34;(E) &#34;, msg)</code></pre>
+    if (Log.PrintLocal != None):
+      try:
+        with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+          f.write(str(datetime.datetime.now())+&#34; (E) &#34; + str(msg) + &#34;\n&#34;)
+      except Exception as ex:
+        Log.jsonError(&#34;Unexpected logging error occurred!&#34;)</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="moodle.log.Log.PrintLocal"><code class="name">var <span class="ident">PrintLocal</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
+<dt id="moodle.log.Log.initLocalLog"><code class="name flex">
+<span>def <span class="ident">initLocalLog</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def initLocalLog(path):
+  Log.PrintLocal = type(&#39;&#39;, (), {})()
+  Log.PrintLocal.name = path
+  Log.local(&#34;Start new session&#34;)</code></pre>
+</details>
+</dd>
+<dt id="moodle.log.Log.initTempLog"><code class="name flex">
+<span>def <span class="ident">initTempLog</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def initTempLog():
+  Log.PrintLocal = tempfile.NamedTemporaryFile()</code></pre>
+</details>
+</dd>
 <dt id="moodle.log.Log.jsonError"><code class="name flex">
 <span>def <span class="ident">jsonError</span></span>(<span>msg)</span>
 </code></dt>
@@ -174,7 +279,12 @@ def local(msg):
 
   `return`: returns nothing.
   &#34;&#34;&#34;
-  print(&#34;(*) &#34;, msg)</code></pre>
+  if (Log.PrintLocal != None):
+    try:
+      with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+        f.write(str(datetime.datetime.now())+&#34; (*) &#34; + str(msg) + &#34;\n&#34;)
+    except Exception as ex:
+      Log.jsonError(&#34;Unexpected logging error occurred!&#34;)</code></pre>
 </details>
 </dd>
 <dt id="moodle.log.Log.localException"><code class="name flex">
@@ -197,7 +307,31 @@ def localException(msg):
 
   `return`: returns nothing.
   &#34;&#34;&#34;
-  print(&#34;(E) &#34;, msg)</code></pre>
+  if (Log.PrintLocal != None):
+    try:
+      with open(Log.PrintLocal.name, &#39;a&#39;) as f:
+        f.write(str(datetime.datetime.now())+&#34; (E) &#34; + str(msg) + &#34;\n&#34;)
+    except Exception as ex:
+      Log.jsonError(&#34;Unexpected logging error occurred!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="moodle.log.Log.printLog"><code class="name flex">
+<span>def <span class="ident">printLog</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def printLog():
+  if (Log.PrintLocal == None):
+    Log.jsonError(&#34;backend error, invalid read to log!&#34;)
+  print(&#34;=== Printing Log file ===&#34;)
+  with open(Log.PrintLocal.name) as f:
+    for line in f:
+      print(line, end =&#34;&#34;)</code></pre>
 </details>
 </dd>
 </dl>
@@ -220,10 +354,14 @@ def localException(msg):
 <ul>
 <li>
 <h4><code><a title="moodle.log.Log" href="#moodle.log.Log">Log</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="moodle.log.Log.PrintLocal" href="#moodle.log.Log.PrintLocal">PrintLocal</a></code></li>
+<li><code><a title="moodle.log.Log.initLocalLog" href="#moodle.log.Log.initLocalLog">initLocalLog</a></code></li>
+<li><code><a title="moodle.log.Log.initTempLog" href="#moodle.log.Log.initTempLog">initTempLog</a></code></li>
 <li><code><a title="moodle.log.Log.jsonError" href="#moodle.log.Log.jsonError">jsonError</a></code></li>
 <li><code><a title="moodle.log.Log.local" href="#moodle.log.Log.local">local</a></code></li>
 <li><code><a title="moodle.log.Log.localException" href="#moodle.log.Log.localException">localException</a></code></li>
+<li><code><a title="moodle.log.Log.printLog" href="#moodle.log.Log.printLog">printLog</a></code></li>
 </ul>
 </li>
 </ul>

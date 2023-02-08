@@ -129,12 +129,12 @@ class MoodleSubmission:
     
     `comparator`: (default=`compareStringsIgnoreWhiteSpace`) the comparator used to match the obtained results. 
     
-    `return`: returns bool, ?obtainedRes, ?expectedRes.
+    `return`: returns bool, obtainedRes, expectedRes.
     """
     obtainedRes = self.handle.eval(input)
     expectedRes = open(output, "r").read()
     if (comparator(obtainedRes, expectedRes)):
-      return True
+      return True, obtainedRes, expectedRes
     else:
       return False, obtainedRes, expectedRes
 
