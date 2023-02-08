@@ -1,4 +1,4 @@
-### Package for assignment submissions from moodle.
+# Package for assignment submissions from moodle.
 
 This package provides a set of APIs to make evaluation of moodle assignment submissions easier.
 The idea is to create a reusable set of classes to replace hard to read/debug bash scripts we are currently using.
