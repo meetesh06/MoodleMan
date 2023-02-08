@@ -1,0 +1,19 @@
+2023-02-09 00:46:08.839892 (*) Start new session
+2023-02-09 00:46:08.840600 (*) Zip file is valid!
+2023-02-09 00:46:08.841164 (*) Extraction to temporary directory successful!
+2023-02-09 00:46:08.841236 (*) 'validate' and 'compile' are callable.
+2023-02-09 00:46:08.841685 (*) validate returned: True, /tmp/tmpy_oang1l/submission/Main.java
+2023-02-09 00:46:09.260245 (*) compile returned: 0
+2023-02-09 00:46:11.667370 (*) Start new session
+2023-02-09 00:46:11.667975 (*) Zip file is valid!
+2023-02-09 00:46:11.668490 (*) Extraction to temporary directory successful!
+2023-02-09 00:46:11.668565 (*) 'validate' and 'compile' are callable.
+2023-02-09 00:46:11.668835 (*) validate returned: True, /tmp/tmp1_qbgsjf/submission/Main.java
+2023-02-09 00:46:12.081760 (*) compile returned: 0
+2023-02-09 00:46:45.199194 (*) Start new session
+2023-02-09 00:46:45.199272 (*) Processing: sub1.zip
+2023-02-09 00:46:45.199914 (*) Zip file is valid!
+2023-02-09 00:46:45.200404 (*) Extraction to temporary directory successful!
+2023-02-09 00:46:45.200485 (*) 'validate' and 'compile' are callable.
+2023-02-09 00:46:45.200802 (*) validate returned: True, /tmp/tmpvaa80m25/submission/Main.java
+2023-02-09 00:46:45.603673 (*) compile returned: 0

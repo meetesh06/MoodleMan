@@ -2,23 +2,23 @@ import os
 from pathlib import Path
 from .log import Log
 
-"""
-This module contains the handlers for handling different type of projects.
-The module currently contains an implementation for
-1) Java: JavaHandler
-"""
+# This module contains the handlers for handling different type of projects.
+# The module currently contains an implementation for
+# 1) Java: JavaHandler
+
 
 class GeneralHandler:
   """
-  GeneralHandler is an abstract class the provides basic functionality.
-  'validate', 'compile' and 'eval' methods bust be defined by the subclasses.
+  `GeneralHandler` is an abstract class the provides basic functionality.
+  `validate`, `compile` and `eval` methods bust be defined by the subclasses.
   """
   def __init__(self, workPath):
     """
-    Constructs a new 'GeneralHandler' object.
     [Note: should only be called by the constructor of a subclass]
-    :param workPath: The location of the project to process.
-    :return: returns nothing.
+    
+    `workPath`: The location of the project to process.
+
+    `return`: returns nothing.
     """
     self.workPath = workPath
     self.paths = []
@@ -28,34 +28,43 @@ class GeneralHandler:
 
   def getWorkPath(self, path):
     """
-    Equivalent of 'dirname' in bash.
-    eg: getWorkpath("/a/b/c/d.java) -> "/a/b/c"
-    :param path: The path to the entry point of the project.
-    :return: Returns the dirname.
+    Equivalent of `dirname` in bash.
+
+    eg: `getWorkPath`("/a/b/c/d.java) returns "/a/b/c"
+    
+    `path`: The path to the entry point of the project.
+
+    `return`: Returns the dirname.
     """
     return str(path.parents[0])
   
   def getCompilationLogPath(self, path):
     """
-    returns path to a 'outCompilation' file that will exist in the same location as the 'getWorkPath()'
-    :param path: The path to the entry point of the project.
-    :return: Returns the dirname + "/outCompilation"
+    Returns path to a `outCompilation` file that will exist in the same location as the `GeneralHandler.getWorkPath`.
+
+    `path`: The path to the entry point of the project.
+
+    `return`: Returns the dirname + "/outCompilation"
     """
     return self.getWorkPath(path) + "/outCompilation"
 
   def getEvalLogPath(self, path):
     """
-    returns path to a 'ouEval' file that will exist in the same location as the 'getWorkPath()'
-    :param path: The path to the entry point of the project.
-    :return: Returns the dirname + "/ouEval"
+    returns path to a `outEval` file that will exist in the same location as the `GeneralHandler.getWorkPath`.
+
+    `path`: The path to the entry point of the project.
+    
+    `return`: Returns the dirname + "/outEval"
     """
-    return self.getWorkPath(path) + "/ouEval"
+    return self.getWorkPath(path) + "/outEval"
 
   def pushPathContext(self, path):
     """
     Pushes the existing working directory onto a stack and navigates to a given directory.
-    :param path: Path to goto.
-    :return: returns nothing.
+
+    `path`: Path to goto.
+    
+    `return`: returns nothing.
     """
     self.paths.append(os.getcwd())
     os.chdir(path)
@@ -63,16 +72,20 @@ class GeneralHandler:
   def popPathContext(self):
     """
     Pops one element from the stack and navigates to it.
-    :return: returns nothing.
+    
+    `return`: returns nothing.
     """
     os.chdir(self.paths.pop())
 
   def genericValidator(self, searchType, entryFile):
     """
-    Searches for a given 'entryFile' recursively in the project directory and returns its path if found.
-    :param searchType: Regex for file type, eg: "*.java", "*.[tT][xX][tT]", etc...
-    :param entryFile: Name of the entryFile to search for "Main.java" (note that this is expected to be unique in this validator).
-    :return: Tuple(status: bool, entryFilePath: string). If status is false 'entryFilePath' contains the error message.
+    Searches for a given `entryFile` recursively in the project directory and returns its path if found.
+    
+    `searchType`: Regex for file type, eg: "\*.java", "\*.[tT][xX][tT]", etc...
+
+    `entryFile`: Name of the entryFile to search for "Main.java" (note that this is expected to be unique in this validator).
+    
+    `return`: Tuple(status: bool, entryFilePath: string). If status is false 'entryFilePath' contains the error message.
     """
     result = list(Path(self.workPath).rglob(searchType))
     if (len(result) > 0):
@@ -94,10 +107,13 @@ class GeneralHandler:
 
   def genericCompiler(self, mainFilePath, compilationCommand):
     """
-    Navigates to the directory where the 'mainFilePath' exists and executes the 'compilationCommand'.
-    :param mainFilePath: Path to the entryFile, eg: "a/b/c/Main.java"
-    :param compilationCommand: Command to execute in the directory to compile, eg: "javac Main.java"
-    :return: (returnStatus: int) returns the exit status of the compilation process.
+    Navigates to the directory where the `mainFilePath` exists and executes the `compilationCommand`.
+    
+    `mainFilePath`: Path to the entryFile, eg: "a/b/c/Main.java"
+    
+    `compilationCommand`: Command to execute in the directory to compile, eg: "javac Main.java"
+    
+    `return`: (returnStatus: int) returns the exit status of the compilation process.
     """
     self.pushPathContext(self.getWorkPath(mainFilePath))
     cmd = compilationCommand + " >"+self.getCompilationLogPath(mainFilePath)+" 2>&1"
@@ -107,11 +123,15 @@ class GeneralHandler:
 
   def genericEval(self, mainFilePath, runCommand, inputFile):
     """
-    Navigates to the directory where the 'mainFilePath' exists and executes the 'runCommand' passing 'inputFile' as STDIN to the program.
-    :param mainFilePath: Path to the entryFile, eg: "a/b/c/Main.java"
-    :param runCommand: Command to execute in the directory. It gets executed as [runCommand] < [inputFile].
-    :param inputFile: Path to the inputfile to be passed as STDIN
-    :return: Returns the obtained result as string
+    Navigates to the directory where the `mainFilePath` exists and executes the `runCommand` passing `inputFile` as STDIN to the program.
+    
+    `mainFilePath`: Path to the entryFile, eg: "a/b/c/Main.java"
+    
+    `runCommand`: Command to execute in the directory. It gets executed as [runCommand] < [inputFile].
+    
+    `inputFile`: Path to the inputfile to be passed as STDIN
+    
+    `return`: Returns the obtained result as string
     """
     self.pushPathContext(self.getWorkPath(mainFilePath))
     cmd = runCommand + " < " + inputFile + " > " + self.getEvalLogPath(mainFilePath) + " 2>&1"
@@ -121,19 +141,22 @@ class GeneralHandler:
 
 class JavaHandler(GeneralHandler):
   """
-  JavaHandler extends GeneralHandler to support java submissions.
+  `JavaHandler` extends `GeneralHandler` to support java submissions.
   It expects that there will be a unique entry point (default="Main.java") somewhere in the project.
   The handler recursively searches the project for a this unique entry point.
   It goes to the directory where the entry point exists and compiles it using javac. 
   """
   def __init__(self, workPath, entryFilename="Main.java", compileCommand="javac Main.java", evalCommand="java Main"):
     """
-    Constructs a new 'JavaHandler' object.
-    :param workPath: The location of the project to process.
-    :param entryFilename: (default="Main.java") Name of the entry file of the project.
-    :param compileCommand: (default="javac Main.java") Compilation command.
-    :param evalCommand: (default="java Main") Eval command.
-    :return: returns nothing.
+    `workPath`: The location of the project to process.
+    
+    `entryFilename`: (default="Main.java") Name of the entry file of the project.
+    
+    `compileCommand`: (default="javac Main.java") Compilation command.
+    
+    `evalCommand`: (default="java Main") Eval command.
+    
+    `return`: returns nothing.
     """
     super().__init__(workPath)
     self.entryFilename = entryFilename
@@ -143,8 +166,9 @@ class JavaHandler(GeneralHandler):
   # Ensures that the extracted folder contains the Main.java (the entry file)
   def validate(self):
     """
-    Validates that the project contains a unique entry point. 
-    :return: Tuple(status: bool, entryFilePath: string). If status is false 'entryFilePath' contains the error message.
+    Validates that the project contains a unique entry point (`self.entryFilename`). 
+    
+    `return`: Tuple(status: bool, entryFilePath: string). If status is false 'entryFilePath' contains the error message.
     """
     res = GeneralHandler.genericValidator(self, "*.java", self.entryFilename)
     self.validated = res[0]
@@ -154,8 +178,9 @@ class JavaHandler(GeneralHandler):
   # Compiles the given file
   def compile(self):
     """
-    Compiles the project using javac.
-    :return: (returnStatus: int) returns the exit status of the compilation process.
+    Compiles the project using `javac`.
+    
+    `return`: (returnStatus: int) returns the exit status of the compilation process.
     """
     if (self.validated == False):
       Log.jsonError("Tried to compile an invalidated submission.")
@@ -166,9 +191,11 @@ class JavaHandler(GeneralHandler):
   # Evaluate
   def eval(self, inputFile):
     """
-    Evaluates the program by passing the input file as STDIN to the compiled program.
-    :param inputFile: path the input file
-    :return: Returns the obtained result as string
+    Evaluates the program by passing the input file as `STDIN` to the compiled program.
+    
+    `inputFile`: path the input file
+    
+    `return`: Returns the obtained result as string
     """
     if (self.compiled == False):
       Log.jsonError("Cannot eval without successful compilation!")

@@ -1,11 +1,12 @@
 from zipfile import ZipFile
 import tempfile
-from .log import Log
 import shutil
-from .handlers import GeneralHandler
-"""
-This module contains the classes that are used to interact with moodle submissions directly.
-"""
+from os import path
+from moodle.log import Log
+from moodle.handlers import GeneralHandler
+
+# This module contains the classes that are used to interact with moodle submissions directly.
+
 
 # ref: https://stackoverflow.com/questions/16474848/python-how-to-compare-strings-and-ignore-white-space-and-special-characters
 def compareStringsIgnoreWhiteSpace(a, b):
@@ -20,9 +21,12 @@ def compareStringsIgnoreWhiteSpace(a, b):
 def ensureCallable(obj, method):
   """
   Ensures a method exists and can be called given an object, otherwise throws an error and exits.
-  :param obj: Object to check.
-  :param method: Name of the method.        
-  :return: returns nothing.
+  
+  `obj`: Object to check.
+  
+  `method`: Name of the method.        
+  
+  `return`: returns nothing.
   """
   canCall = hasattr(obj, method) and callable(getattr(obj, method))
   if (canCall == False):
@@ -30,21 +34,26 @@ def ensureCallable(obj, method):
 
 class MoodleSubmission:
   """
-  MoodleSubmission takes an individual moodle submission zip and contains methods to 
-  validate, compile and eval it.
+  `MoodleSubmission` takes an individual moodle submission zip and handles it using a `moodle.handlers.GeneralHandler` implementation.
   The class also takes care of allocation and cleanup of temporary directories/files. 
   """
   def __init__(self, path, subHandler):
     """
-        Construct a new 'MoodleSubmission' object and does the following.
+        Construct a new `MoodleSubmission` object and does the following.
+        
         1. Ensures that the provided submission is a valid zip file.
+        
         2. If the zip is valid, extracts the submission to a temporary directory.
-        3. Creates a submission handler object and passes the extracted file path to it.
-        4. Calls the submission handler methods to initialize the submission.
+        
+        3. Creates a `moodle.handlers.GeneralHandler` object and passes the extracted file path to it.
+        
+        4. Calls the `MoodleSubmission.callHandlerMethods` methods to initialize the submission.
 
-        :param path: Path to the submission.zip file (recommended absolute paths)
-        :param subHandler: A submission handler class that extends GeneralHandler (JavaHandler, CppHandler, etc. See handlers.py)        
-        :return: returns nothing
+        `path`: Path to the submission.zip file (recommended absolute paths)
+        
+        `subHandler`: A submission handler class that extends `moodle.handlers.GeneralHandler` (For example, `moodle.handlers.JavaHandler`). See `moodle.handlers`        
+        
+        `return`: returns nothing
     """
 
     try:
@@ -65,7 +74,7 @@ class MoodleSubmission:
       self.handle = subHandler(self.dir)
     except Exception as ex:
       Log.localException(ex)
-      Log.jsonError("Failed to open zip")
+      Log.jsonError("Failed to open zip file!")
     
     self.callHandlerMethods()
 
@@ -73,8 +82,9 @@ class MoodleSubmission:
 
   def callHandlerMethods(self):
     """
-    Calls the validate and compile method from the supplied submission handler.
-    :return: returns nothing
+    Calls the `validate` and `compile` method from `subHandler` (instance of `moodle.handlers.GeneralHandler`).
+    
+    `return`: returns nothing
     """
     try:
       # Ensure the methods exist and can be called
@@ -99,9 +109,11 @@ class MoodleSubmission:
     
   def eval(self, input):
     """
-    Calls the eval method from the supplied handler.
-    :param input: Path to input file to be evaluated.
-    :return: returns the result obtained as string.
+    Calls the `eval` method from method from `subHandler` (instance of `moodle.handlers.GeneralHandler`).
+
+    `input`: Path to input file to be evaluated.
+    
+    `return`: returns the result obtained as string.
     """
     return self.handle.eval(input)
 
@@ -109,18 +121,22 @@ class MoodleSubmission:
 
   def evalMatch(self, input, output, comparator=compareStringsIgnoreWhiteSpace):
     """
-    Calls the eval method from the supplied handler and compares the obtained result against the expected result.
-    :param input: Path to input file to be evaluated.
-    :param output: Path to expected output file.
-    :param comparator: (default=compareStringsIgnoreWhiteSpace) the comparator used to match the obtained results. 
-    :return: returns bool.
+    Calls the `eval` method from the `subHandler` and compares the obtained result against the expected result.
+    
+    `input`: Path to input file to be evaluated.
+
+    `output`: Path to expected output file.
+    
+    `comparator`: (default=`compareStringsIgnoreWhiteSpace`) the comparator used to match the obtained results. 
+    
+    `return`: returns bool, ?obtainedRes, ?expectedRes.
     """
     obtainedRes = self.handle.eval(input)
     expectedRes = open(output, "r").read()
     if (comparator(obtainedRes, expectedRes)):
       return True
     else:
-      return False
+      return False, obtainedRes, expectedRes
 
   def __del__(self):
     try:

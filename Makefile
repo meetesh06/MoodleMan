@@ -1,8 +1,5 @@
 .PHONY: doc
 doc:
-	mkdir -p doc
-	pydoc -w moodle
-	pydoc -w `find moodle -name '*.py'`
-	mv *.html doc
+	python -m pdoc --html moodle -o doc
 clean:
-	rm -rf doc 2>/dev/null
+	rm -rf doc
