@@ -12,9 +12,9 @@ Most assignments follow a simple structure:
 ...
 5. return number of passed testcases
 
-The [SubmissionHandler](./doc/moodle/handlers.html) Class is extended for different languages like Java, Cpp, etc. to make this task easier.
+The [SubmissionHandler](https://meetesh06.github.io/MoodleMan/handlers.html) Class is extended for different languages like Java, Cpp, etc. to make this repetitive task easier.
 
-See documentation: [docs/moodle](./doc/moodle/index.html).
+See documentation [here](https://meetesh06.github.io/MoodleMan/).
 
 
 ## Example projects
@@ -57,8 +57,8 @@ print(finalRes)
 Running this example
 
 ```bash
-git clone git@github.com:meetesh06/MoodleManagerPy.git
-cd MoodleManagerPy/examples/Java
+git clone git@github.com:meetesh06/MoodleMan.git
+cd MoodleMan/examples/Java
 PYTHONPATH="${PYTHONPATH}:../../" python Assignment1.py sub1.zip
 ```
 
